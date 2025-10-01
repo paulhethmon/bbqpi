@@ -1,11 +1,7 @@
 package com.hethmon.bbq;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Properties;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
@@ -47,8 +43,8 @@ public class Pit {
 
     protected double lowTemp = targetTemp - 10.0;
 	protected double highTemp = targetTemp + 10.0;
-	protected double wayTooHighTemp = 270.0;
-	protected double wayTooLowTemp = 200.0;
+	protected double wayTooHighTemp = targetTemp + 50.0;
+	protected double wayTooLowTemp = targetTemp - 30.0;
 
     @Getter
     @Setter
@@ -101,6 +97,8 @@ public class Pit {
     	double temp = 0.0;
     	int highCount = 0;
     	int lowCount = 0;
+
+        pin = getPin();
     	
     	System.out.println(version);
 
@@ -109,6 +107,7 @@ public class Pit {
     		do {
     			temp = takeTemp();
     			cookingLog.info("Pit temperature = [{}]", temp);
+                log.info("Pit temperature = [{}]", temp);
     			if (tellPitMaster == true) {
     				tellThePitMaster(temp);
     			}
@@ -117,14 +116,14 @@ public class Pit {
     				// need to raise the temp
     				lowCount++;
     				highCount = 0; // reset high
-    				cookingLog.info("Low temp count = [{}]", lowCount);
+    				log.info("Low temp count = [{}]", lowCount);
     			}
     			
     			if (temp > highTemp) {
     				// temp is too high
     				highCount++;
     				lowCount = 0; // reset low
-    				cookingLog.info("High temp count = [{}]", highCount);
+    				log.info("High temp count = [{}]", highCount);
     			}
     			
     			// if lowCount is greater than 2, then do something to fix it
@@ -132,18 +131,18 @@ public class Pit {
     				if (pin == null) {
     					pin = getPin();
     				}
-    				cookingLog.info("Low temp count = [{}]. Making the fire hotter.", lowCount);
+    				log.info("Low temp count = [{}]. Making the fire hotter.", lowCount);
     				makeHotter(pin); // stoke the fire
     				lowCount = 0;
     			}
     			// if the temp is below our minimum, do something
     			if (temp < wayTooLowTemp) {
-    				cookingLog.info("Current temperature is [{}]", temp);
-    				cookingLog.info("Way Too Low temperature is set to [{}]", wayTooLowTemp);
+    				log.info("Current temperature is [{}]", temp);
+    				log.info("Way Too Low temperature is set to [{}]", wayTooLowTemp);
     				if (pin == null) {
     					pin = getPin();
     				}
-    				cookingLog.info("Temperature is way below. Making the fire hotter.", lowCount);
+    				log.info("Temperature is way below. Making the fire hotter.", lowCount);
     				makeHotter(pin);
     				getHelp(temp);
     			}
@@ -153,18 +152,18 @@ public class Pit {
        				if (pin == null) {
     					pin = getPin();
     				}
-    				cookingLog.info("High temp count = [{}]. Making the fire colder.", lowCount);
+    				log.info("High temp count = [{}]. Making the fire colder.", lowCount);
     				makeColder(pin);
     				//getHelp(temp);
     				highCount = 0;
     			}
     			if (temp > wayTooHighTemp) {
-    				cookingLog.info("Current temperature is [{}]", temp);
-    				cookingLog.info("Way Too High temperature is set to [{}]", wayTooHighTemp);
+    				log.info("Current temperature is [{}]", temp);
+    				log.info("Way Too High temperature is set to [{}]", wayTooHighTemp);
        				if (pin == null) {
     					pin = getPin();
     				}
-    				cookingLog.info("Temperature is way high. Making the fire colder.", lowCount);
+    				log.info("Temperature is way high. Making the fire colder.", lowCount);
     				makeColder(pin);
     				getHelp(temp);
     			}
@@ -188,7 +187,8 @@ public class Pit {
     protected void makeHotter(DigitalOutput pin) {
     	
     	System.out.println("Making the temperature hotter.");
-		cookingLog.info("Turning ON the fan.");
+		log.info("Turning ON the fan.");
+        log.info("Turning ON the fan.");
     	pin.low();
     	System.out.println("Turning fan on. (PIN low)");
     }
@@ -202,7 +202,8 @@ public class Pit {
     protected void makeColder(DigitalOutput pin) {
     	
     	System.out.println("Making the temperature colder.");
-		cookingLog.info("Turning OFF the fan.");
+		log.info("Turning OFF the fan.");
+        log.info("Turning OFF the fan.");
     	pin.high();
     	System.out.println("Turning fan off. (PIN high)");
     }
@@ -228,8 +229,9 @@ public class Pit {
     protected double takeTemp() {
     	// one wire bus is located on GPIO-04 pin
     	TemperatureSensor ts = new TemperatureSensor("3b-0000001833fa");
-    	double farenheit = ts.getFarenheit();
+    	double farenheit = ts.getFahrenheit();
     	System.out.println("Temp is " + farenheit);
+        log.info("Temp is [{}]", farenheit);
     	return farenheit;
     }
     
@@ -263,6 +265,7 @@ public class Pit {
      * @return
      */
     protected DigitalOutput getPin() {
+        log.info("Creating gpio PIN on pin 5 ...");
         // build the config we need
         DigitalOutputConfig config = DigitalOutput.newConfigBuilder(pi4j)
                 .id("Fan")
@@ -278,6 +281,7 @@ public class Pit {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 		}
+        log.info("Built PIN 5 as [{}]", digitalOutput);
         return digitalOutput;
     }
     

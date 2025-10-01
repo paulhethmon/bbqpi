@@ -9,7 +9,7 @@ package com.hethmon.bbq;
 public abstract class Sensor {
 
 	private String serialNumber = null;
-	private String devicePath = "/sys/bus/w1/devices/w1_bus_master1/";
+	private String devicePath = "/sys/bus/w1/devices/";
 	
 
 	public String getSerialNumber() {

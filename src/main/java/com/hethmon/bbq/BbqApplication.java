@@ -2,6 +2,7 @@ package com.hethmon.bbq;
 
 import com.pi4j.Pi4J;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -17,6 +18,8 @@ public class BbqApplication implements ApplicationRunner {
 
     @Autowired
     private Pit pit;
+    @Autowired
+    private Gpio gpio;
 
 	public static void main(String[] args) {
         SpringApplication app = new SpringApplication(BbqApplication.class);
@@ -68,6 +71,8 @@ public class BbqApplication implements ApplicationRunner {
                 log.error("Unknown option [{}] = {}", optionName, args.getOptionValues(optionName));
             }
         });
+
+        gpio.test();
 
         if (doPit == true) {
             pit.setTargetTemp(targetTemp);

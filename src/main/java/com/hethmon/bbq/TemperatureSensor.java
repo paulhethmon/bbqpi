@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a 1 wire bus temperature sensor
@@ -19,7 +17,7 @@ public class TemperatureSensor extends Sensor {
 
 	private String fileName = null;
 	
-	public TemperatureSensor() {
+	private TemperatureSensor() {
 		// noop
 	}
 	
@@ -28,7 +26,7 @@ public class TemperatureSensor extends Sensor {
 		fileName = getDevicePath() + getSerialNumber() + "/w1_slave";
 	}
 	
-	public String getTemperature() {
+	private String getTemperature() {
 		String temp = null;
 		
 		ArrayList<String> data = getFileData(fileName);
@@ -60,7 +58,7 @@ public class TemperatureSensor extends Sensor {
 		}
 	}
 	
-	public double getFarenheit() {
+	public double getFahrenheit() {
 		double temp = getCelsius();
 		
 		temp = 9.0 * temp/5.0 + 32.0;
