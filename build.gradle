@@ -10,7 +10,7 @@ description = 'Smoker/BBQ temperature control using a Raspberry Pi'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -26,11 +26,10 @@ repositories {
 
 dependencies {
 
-    implementation 'com.pi4j:pi4j-core:3.0.2'
-    implementation 'com.pi4j:pi4j-plugin-raspberrypi:3.0.2'
-    // Add other Pi4J plugins as needed, e.g., for specific hardware
-    // implementation 'com.pi4j:pi4j-plugin-linuxfs:3.0.2'
-    implementation 'com.pi4j:pi4j-plugin-pigpio:3.0.2'
+	implementation 'org.slf4j:slf4j-api:2.0.16'
+	implementation 'org.slf4j:slf4j-simple:2.0.16'
+	implementation 'com.pi4j:pi4j-core:4.0.0'
+	implementation 'com.pi4j:pi4j-plugin-ffm:4.0.0'
 
     // The BOM will manage the module versions and transitive dependencies
     implementation platform('com.google.auth:google-auth-library-bom:1.30.1')
