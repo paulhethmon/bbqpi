@@ -131,8 +131,7 @@ public class Gpio {
         // Or you can use a configuration builder
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("my-dout")
-                .name("My LED")
-                .address(5)
+                .name("My LED").bcm(5)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.HIGH);
         var led = pi4j.create(ledConfig);

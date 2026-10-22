@@ -8,9 +8,16 @@ group = 'com.hethmon'
 version = '0.0.1-SNAPSHOT'
 description = 'Smoker/BBQ temperature control using a Raspberry Pi'
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+}
+
+plugins.withType(JavaPlugin).configureEach {
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(25)
+		}
+		modularity.inferModulePath = true
 	}
 }
 

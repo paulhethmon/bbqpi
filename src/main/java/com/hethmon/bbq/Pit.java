@@ -269,8 +269,7 @@ public class Pit {
         // build the config we need
         DigitalOutputConfig config = DigitalOutput.newConfigBuilder(pi4j)
                 .id("Fan")
-                .name("Fan Controller")
-                .address(5)
+                .name("Fan Controller").bcm(5)
                 .initial(DigitalState.HIGH)
                 .build();
         // create the actual entity
